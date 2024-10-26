@@ -8,6 +8,7 @@ import {
   Pressable,
   FlatList,
   TouchableOpacity,
+  Share,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 // import Icon from 'react-native-vector-icons/FontAwesome'; // Chọn icon theo thư viện bạn muốn sử dụng
@@ -67,7 +68,21 @@ const dmctFood = ({ navigation, route }) => {
       setPlaying(false);
     }
   };
-  //
+  //Share
+
+  const handleShare = async () => {
+    try {
+      await Share.share({
+        message:`Check out ${item.Name}!! \nDetails: ${item.details}`,
+        url: item.link,
+        title: item.Name,
+        subject: "Check out this recipe",
+      })
+    } catch (error) {
+      console.error("Error sharing content: ", error.message);
+      
+    }
+  }
 
   return (
     <View style={styles.container}>
@@ -103,9 +118,14 @@ const dmctFood = ({ navigation, route }) => {
 
       <View style={styles.v1}>
         <View style={styles.v11}>
+
+
           <View style={styles.food}>
             <Text style={styles.t1}>{item.Name}</Text>
-            <Icon name="share-social" size={25} color="black" />
+            <TouchableOpacity onPress={handleShare}>
+              <Icon name="share-social" size={25} color="black" />
+            </TouchableOpacity>
+            
           </View>
 
           <View style={styles.star}>
@@ -190,7 +210,8 @@ const styles = StyleSheet.create({
   view1: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-around",
+    justifyContent: "space-between",
+    margin:20
   },
   iconback: {
     //flexDirection: 'row',

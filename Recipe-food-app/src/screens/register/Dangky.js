@@ -27,14 +27,27 @@ const Dangky = () => {
   const [name, setName] = useState();
   const ngay = new Date().toISOString().split("T")[0];
 
-
   const handleCheck = async () => {
     // Kiểm tra các trường đầu vào, loại bỏ khoảng trắng nếu có
     if (!name?.trim() || !pass?.trim() || !mail?.trim()) {
       showToast("Vui lòng điền đầy đủ thông tin");
       return;
     }
-  
+
+    if (!/^[a-zA-Z0-9]+@gmail\.com$/.test(mail)) {
+      showToast("Email chưa đúng");
+      return;
+    }
+
+    if (pass.length < 8) {
+      showToast("Mật khẩu phải có ít nhất 8 kí tự");
+      return;
+    } else if (!/^[A-Z][a-zA-Z0-9]{7,}$/.test(pass)) {
+      showToast("Viết hoa chữ cái đầu và có ít nhất 8 kí tự");
+      return;
+    }
+    
+
     try {
       const response = await fetch(url, {
         method: "POST",
@@ -48,13 +61,13 @@ const Dangky = () => {
           date: ngay,
         }),
       });
-  
+
       if (response.ok) {
         showToast("Đăng ký thành công");
         setTimeout(() => {
-           navigation.navigate("name")
+          navigation.navigate("name");
         }, 3000);
-       
+
         setMail(""); // Đặt lại các trường đầu vào
         setName("");
         setPass("");
@@ -66,8 +79,6 @@ const Dangky = () => {
       console.error("Error:", error);
     }
   };
-  
-  
 
   const showToast = (message) => {
     Toast.show({
@@ -129,13 +140,17 @@ const Dangky = () => {
           onChange={(e) => setName(e.target.value)}
         />
 
-        <FormControl sx={{ m: 0, width: "320px" }} variant="outlined" style={styles.textField}>
+        <FormControl
+          sx={{ m: 0, width: "320px" }}
+          variant="outlined"
+          style={styles.textField}
+        >
           <InputLabel htmlFor="outlined-adornment-password">
             Password
           </InputLabel>
           <OutlinedInput
             id="outlined-adornment-password"
-            type={showPassword ? "text" : "password"}        
+            type={showPassword ? "text" : "password"}
             value={pass}
             onChange={(e) => setPass(e.target.value)}
             endAdornment={
@@ -158,10 +173,7 @@ const Dangky = () => {
       </View>
 
       <View style={styles.view1}>
-        <Pressable
-          style={styles.Pre}
-          onPress={handleCheck}
-        >
+        <Pressable style={styles.Pre} onPress={handleCheck}>
           <Text style={styles.text2}>Đăng ký</Text>
         </Pressable>
       </View>
@@ -175,7 +187,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    justifyContent:'center'
+    justifyContent: "center",
   },
   view: {
     marginTop: 0,
